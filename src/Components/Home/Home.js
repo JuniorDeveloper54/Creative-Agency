@@ -1,20 +1,21 @@
 import React from 'react';
-import Header from './Header/Header';
-import NavBar from './NavBar/NavBar';
-import Services from './Services/Services';
-import WorkSlider from './WorkSlider/WorkSlider';
-import Feedback from './Feedback/Feedback'
+import Feedbacks from './Feedbacks/Feedbacks';
 import Footer from './Footer/Footer';
+import Header from './Header/Header';
+import Partners from './Partners/Partners';
+import Services from './Services/Services';
+import Slider from './Slider/Slider';
 
 const Home = () => {
+    document.title='Creative Agency'
     return (
         <div>
-            <NavBar />
-            <Header />
-            <Services />
-            <WorkSlider />
-            <Feedback />
-            <Footer />
+            <Header></Header>
+            <Partners></Partners>
+            <Services></Services>
+            <Slider></Slider>
+            <Feedbacks></Feedbacks>
+            <Footer></Footer>
         </div>
     );
 };

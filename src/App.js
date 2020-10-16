@@ -1,47 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from "react-router-dom";
+import {BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from './Components/Home/Home';
-import UsersComponent from './Components/UsersComponent/UsersComponent';
-import AdminsComponents from './Components/AdminsComponent/AdminsComponents';
-import NoMatch from './Components/NoMatch/NoMatch';
+import ServiceList from './Components/Dashboard/ServiceList/ServiceList';
+import Order from './Components/Dashboard/Order/Order';
+import Review from './Components/Dashboard/Review/Review';
+import AddService from './Components/Dashboard/AddService/AddService';
+import MakeAdmin from './Components/Dashboard/MakeAdmin/MakeAdmin';
+import Dashboard from './Components/Dashboard/Dashboard';
 import Login from './Components/Login/Login';
 import { createContext } from 'react';
-import { useState } from 'react';
-import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
-
-export const UserContext = createContext();
-
-
+import { useEffect } from 'react';
+import PrivateRoute from './Components/PrivateRoute/PrivateRoute'
+import NotFound from './Components/NotFound/NotFound';
+export const UserContext=createContext()
 function App() {
-  const [loggedInUser, setLoggedInUser] = useState({});
+  const [data,setData]=useState({})
+  
 
+    useEffect(()=>{
+      //get token and fetch user info
+    const sessionData=sessionStorage.getItem('token')
+    const token=JSON.parse(sessionData)
+    token && fetch('https://creative-agency-fullstack.herokuapp.com',{
+      method:'GET',
+      headers:{ 
+        'Content-Type':'application/json',
+        token:token
+      }
+    })
+    .then(res=>res.json())
+    .then(result=>{
+      setData({...data,user:{name:result.name, email:result.email, img:result.picture}})
+    })
+    },[])
+    
   return (
-    <UserContext.Provider value={[loggedInUser, setLoggedInUser]}>
+    <UserContext.Provider value={[data,setData]}>
       <Router>
         <Switch>
-          <Route exact path="/">
-            <Home />
+
+          <Route exact path='/'>
+            <Home></Home>
           </Route>
-          <Route path="/home">
-            <Home />
+
+          <Route exact path='/home'>
+            <Home></Home>
           </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <PrivateRoute path="/usersComponent/:project">
-            <UsersComponent />
+
+          <PrivateRoute exact path='/dashboard/service-list'>
+            <ServiceList></ServiceList>
           </PrivateRoute>
-          <PrivateRoute path="/adminsComponents">
-            <AdminsComponents />
+
+          <PrivateRoute exact path='/dashboard/order'>
+            <Order></Order>
           </PrivateRoute>
-          <Route path="*">
-            <NoMatch />
+
+          <PrivateRoute exact path='/dashboard/review'>
+            <Review></Review>
+          </PrivateRoute>
+
+          <PrivateRoute exact path='/dashboard/add-service'>
+            <AddService></AddService>
+          </PrivateRoute>
+
+          <PrivateRoute exact path='/dashboard/make-admin'>
+            <MakeAdmin></MakeAdmin>
+          </PrivateRoute>
+
+          <Route exact path='/login'>
+            <Login></Login>
           </Route>
+          <Route path='*'>
+            <NotFound></NotFound>
+          </Route>
+
         </Switch>
       </Router>
     </UserContext.Provider>

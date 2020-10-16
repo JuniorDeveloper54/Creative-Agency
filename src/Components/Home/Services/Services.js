@@ -1,45 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { useState } from 'react';
-import { Container } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import './Services.css'
-
+import {Container, Row} from 'react-bootstrap';
+import ServiceDetails from './ServiceDetails';
+import loader from '../../../images/loader.gif'
 const Services = () => {
-    const [services, setServices] = useState([]);
-
-    useEffect(() => {
-        fetch(`https://creative-agency-by-sarwar.herokuapp.com/services`)
-            .then(res => res.json())
-            .then(data => {
-                setServices(data);
-            })
-    }, [])
+    const [allService,setAllService]=useState([])
+    useEffect(()=>{
+        fetch('https://creative-agency-fullstack.herokuapp.com/show-all-service')
+        .then(res=>res.json())
+        .then(result=>{
+            setAllService(result)
+            console.log(result)
+        })
+    },[])
     return (
-        <Container fluid className="text-center p-5">
+        <div style={{marginTop:'100px', marginBottom:'50px'}}>
             <Container>
-                <h2>Provide awesome <span style={{ color: "#7AB259" }}>services</span></h2>
-                <div className="row p-5">
+                <h4 style={{color:'#2d2d2d', fontSize:'34px', fontWeight:'600'}} className='text-center'>
+                    Provide awesome <span className='brand-text'>services</span>
+                </h4>
+                <Row xs={12} className='align-items-center' style={{marginTop:'60px'}}>
                     {
-                        services.map(service =>
-                            <div className="col-md-4 p-3 pt-5 pb-5 services-card" key={service._id}>
-                                <Link to={`/usersComponent/${service.title}`} style={{color: "#000000"}}>
-                                    <div>
-                                        {
-                                            service.image.img
-                                            ?<img src={`data:image/png;base64,${service.image.img}`} className="w-25 img-fluid rounded-circle" alt="" />
-                                            :<img src={service.image} className="w-25 img-fluid rounded-circle" alt="" />
-                                        }
-                                    </div>
-                                    <h5>{service.title}</h5>
-                                    <p><small>{service.description}</small></p>
-                                </Link>
-                            </div>
-                        )
+                        allService.length<1 && 
+                        <img src={loader} style={{width:'300px', margin:'auto'}}></img>
                     }
-                </div>
+                    {
+                        allService.map(service=>{
+                            return <ServiceDetails key={service._id} service={service}></ServiceDetails>
+                        })
+                    }
+                </Row>
             </Container>
-        </Container>
+
+        </div>
     );
 };
 
